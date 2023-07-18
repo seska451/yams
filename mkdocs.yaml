@@ -1,6 +1,7 @@
 site_name: YAMS
+docs_dir: docs
 theme:
-  name: readthedocs
+  name: material
   highlightjs: true
 plugins:
   - callouts
