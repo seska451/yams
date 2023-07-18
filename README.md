@@ -1,5 +1,4 @@
 # YAMS - Yet Another Mission Script - DCS World
-[![Documentation Status](https://readthedocs.org/projects/yams-dcs/badge/?version=latest)](https://yams-dcs.readthedocs.io/en/latest/?badge=latest)
 
 Mission scripting in DCS beyond anything fairly simple only leaves you with a handful of options these days, and those options dont really open the world of scripting to you. They can be difficult to understand because the documentation is hard to navigate. 
 
