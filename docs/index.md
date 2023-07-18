@@ -38,3 +38,11 @@ Further, I want the documentation itself to be easy to generate, clean of ads, s
 ## Alright let's get scripting
 
 :sunglasses: Yeah! Head on over to [Getting Started](/getting-started)
+
+## Dependencies
+
+This project only has one dependency: the Simulator Scripting Engine (SSE) which is the standard kit provided by the game - you don't need to install this. Just look for documentation regarding its use in conjunction with other frameworks.
+
+It is useful to know it, as it provides the basic primitives to work with to create complex scripts, like this one, and yours.
+
+For your convenience, I am building a reference for the SSE, [here](/SSE%20Reference)

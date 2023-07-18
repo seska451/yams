@@ -1,11 +1,16 @@
+
+--[[ SSE:coalition.service
+
+--]]
+
 --[[ message:header
 # Message
 
-> [!INFO]
-> The `yams.message` object is useful for sending messages to coalitions, groups, and units.
->
-> Messages are the primary way to communicate information to players and can often be seen in both PVE and PVP, solo
-> and multiplayer scenarios
+!!! info message object
+    The `yams.message` object is useful for sending messages to coalitions, groups, and units.
+
+    Messages are the primary way to communicate information to players and can often be seen in both PVE and PVP, solo
+    and multiplayer scenarios
 --]]
 
 --[[ message:
@@ -33,7 +38,8 @@ yams.message
 local message = {
     text = nil,
     time = 10,
-    should_clear = false
+    should_clear = false,
+    coalition = coalition.side.NEUTRAL
 }
 
 --[[ message:with_text
@@ -116,6 +122,10 @@ yams.message
 function message:send()
     trigger.action.outText(self.text, self.time, self.should_clear)
     return self
+end
+
+function message:to_coalition(coalition)
+
 end
 
 -- End Messages
