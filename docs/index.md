@@ -1,4 +1,4 @@
-# YAMS - Yet Another Mission Script for DCS World
+# Yet Another Mission Script
 
 > [!INFO] Work in progress
 > This is a very new project and so it may not have all the features you are looking for right now.
