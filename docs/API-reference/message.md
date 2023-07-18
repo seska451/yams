@@ -22,14 +22,14 @@ Data structure for messaging information.
  |for_seconds    |method| Sets the message timer|
  |clear_previous_messages    |method| Determines if the previous messages should be cleared|
 
-#### Usage Example
-```lua
-yams.message
-    :with_text("Hello, YAMS!")  -- Output Hello, YAMS!
-    :for_seconds(30)            --    for 30 seconds
-    :clear_previous_messages()  --    clearing the previous messages
-    :send()                     --    send to all players
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")  -- Output Hello, YAMS!
+        :for_seconds(30)            --    for 30 seconds
+        :clear_previous_messages()  --    clearing the previous messages
+        :send()                     --    send to all players
+    ```
 
 ***
 
@@ -44,12 +44,12 @@ Adds text to an ephemeral message shown to the user on the upper RHS of the scre
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :send() -- sends to all players in all coalitions
+    ```
 
 ***
 
@@ -64,13 +64,13 @@ Sets the message duration
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :for_seconds(5)
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :for_seconds(5)
+        :send() -- sends to all players in all coalitions
+    ```
 
 ***
 
@@ -81,13 +81,13 @@ Upon displaying this message, remove all other messages
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :clear_previous_messages()
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :clear_previous_messages()
+        :send() -- sends to all players in all coalitions
+    ```
 
 ***
 
@@ -98,9 +98,43 @@ Display this message, to all players, in all coalitions. Messages appear in the 
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :send()
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :send()
+    ```
+
+***
+
+### message:to_coalition
+
+
+Only send this message to the given coalition.
+
+| param | type |
+| --- | --- |
+| coalition | SSE.coalition.side [Enumeration]|
+
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :to_coalition(coalition.side.BLUE)
+        :send()
+    ```
+]]
+function message:to_coalition(coalition)
+    self.coalition = coalition
+    return self
+end
+
+-- End Messages
+
+--[[ flag:header
+# Flag
+
+> [!INFO]
+> The `yams.flag` object is useful for storing binary state as flags. DCS uses flags to communicate across triggers and steps.
+>
+> For example, a trigger may use a condition that checks is a flag is set or not, before executing its action.

@@ -21,14 +21,14 @@ Data structure for messaging information.
  |for_seconds    |method| Sets the message timer|
  |clear_previous_messages    |method| Determines if the previous messages should be cleared|
 
-#### Usage Example
-```lua
-yams.message
-    :with_text("Hello, YAMS!")  -- Output Hello, YAMS!
-    :for_seconds(30)            --    for 30 seconds
-    :clear_previous_messages()  --    clearing the previous messages
-    :send()                     --    send to all players
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")  -- Output Hello, YAMS!
+        :for_seconds(30)            --    for 30 seconds
+        :clear_previous_messages()  --    clearing the previous messages
+        :send()                     --    send to all players
+    ```
 --]]
 local message = {
     text = nil,
@@ -47,12 +47,12 @@ Adds text to an ephemeral message shown to the user on the upper RHS of the scre
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :send() -- sends to all players in all coalitions
+    ```
 --]]
 function message:with_text(txt)
     self.text = txt
@@ -69,13 +69,13 @@ Sets the message duration
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :for_seconds(5)
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :for_seconds(5)
+        :send() -- sends to all players in all coalitions
+    ```
 --]]
 function message:for_seconds(seconds)
     self.time = seconds
@@ -88,13 +88,13 @@ Upon displaying this message, remove all other messages
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :clear_previous_messages()
-    :send() -- sends to all players in all coalitions
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :clear_previous_messages()
+        :send() -- sends to all players in all coalitions
+    ```
 --]]
 function message:clear_previous_messages()
     self.should_clear = true
@@ -107,20 +107,42 @@ Display this message, to all players, in all coalitions. Messages appear in the 
 
 Returns self
 
-Example:
-```lua
-yams.message
-    :with_text("Hello, YAMS!")
-    :send()
-```
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :send()
+    ```
 --]]
 function message:send()
-    trigger.action.outText(self.text, self.time, self.should_clear)
+    if self.coalition ~= nil then
+        trigger.action.outTextForCoalition(self.coalition, self.text, self.time, self.should_clear )
+    else
+        trigger.action.outText(self.text, self.time, self.should_clear)
+    end
+
     return self
 end
 
-function message:to_coalition(coalition)
+--[[ message:to_coalition
 
+Only send this message to the given coalition.
+
+| param | type |
+| --- | --- |
+| coalition | SSE.coalition.side [Enumeration]|
+
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :to_coalition(coalition.side.BLUE)
+        :send()
+    ```
+]]
+function message:to_coalition(coalition)
+    self.coalition = coalition
+    return self
 end
 
 -- End Messages
@@ -146,13 +168,13 @@ Data structure for flag management.
  |set_value    |method| Sets a flag to a given value|
  |clear_previous_messages    |method| Determines if the previous messages should be cleared|
 
-#### Usage Example
-```lua
-yams.flag
-    :set(31337)                 -- Sets Flag #31337 to true
-    :unset(30)                  -- Sets Flag #30 to false
-    :set_value(420, 8145317)    -- Sets Flag #420 to the number 8145317
-```
+!!! example
+    ```lua
+    yams.flag
+        :set(31337)                 -- Sets Flag #31337 to true
+        :unset(30)                  -- Sets Flag #30 to false
+        :set_value(420, 8145317)    -- Sets Flag #420 to the number 8145317
+    ```
 --]]
 local flag = {
     flag_index = 0,
@@ -162,6 +184,11 @@ local flag = {
 --- Sets the value of a flag for a given index.
 --- @param ndx The flags index number.
 --- @param value The value to set the flag. 0 means off, or false. 1 or higher means on, or true.
+---
+--[[ flag:set_value
+
+
+--]]
 function flag:set_value(ndx, value)
     self.flag_index = ndx
     self.value = value
@@ -171,6 +198,10 @@ end
 
 --- Sets a flag for a given index, to ON.
 --- @param ndx The flags index number.
+--[[ flag:set
+
+
+--]]
 function flag:set(ndx)
     self.flag_index = ndx
     self.value = true
@@ -180,6 +211,10 @@ end
 
 --- Sets a flag for a given index, to OFF.
 --- @param ndx The flags index number.
+--[[ flag:unset
+
+
+--]]
 function flag:unset(ndx)
     self.flag_index = ndx
     self.value = false
@@ -188,6 +223,15 @@ function flag:unset(ndx)
 end
 -- end Flags
 
+--[[ yams:header
+
+The `yams` object is the entry point into the YAMS API. See [Getting Started]('../../getting-started') to learn how to load YAMS into your mission.
+
+!!! example
+    ```lua
+    yams.flag:set(1337) -- sets the 1337 flag ON
+    ```
+--]]
 yams = {
     message = message,
     flag = flag
