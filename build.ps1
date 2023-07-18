@@ -9,3 +9,5 @@ cp .\dist\yams-dcs.min.lua $dest
 pushd src
 python '.\parse.py' -o '..\docs\API-Reference'
 popd
+
+& python -m mkdocs serve
