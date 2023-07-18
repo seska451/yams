@@ -14,12 +14,16 @@ Rather than solve every problem, the problems that get solved, should...
 3. Yield a consistent syntax that allows the editor to fall into the 'pit of success' as much as possible
 4. Minimize script dependencies on installation - must output a single script for consumption by mission editors
 
-# Documentation
+# Handcrafted Documentation
 
 > If you are trying to find the docs - [they are here](https://yams-dcs.rtfd.io) 
 
 The documentation for this project is extremely important, as such I have made contribution to the documents a simple case of 
-writing the docs inline with the code and running the build scripts.
+writing the docs inline with the code and running the build scripts. I have taken great care to make this visually clean, easily searchable, and most importantly, easy to contribute to.
+
+The API Documentation is clearly marked and auto-generated from source code comments that support basic markdown features like quotes, formatting, code blocks, and tables.
+
+Other documentation, like the [Getting Started Guide](https://yams-dcs.readthedocs.io/en/latest/getting-started/) is handcrafted, with images and markdown also.
 
 # Contribution
 If you do wish to contribute, firstly, thankyou for considering this project for your valuable time.
