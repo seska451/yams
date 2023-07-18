@@ -43,6 +43,7 @@ Scripts
 Lib
 Include
 dist
+init
 
 pyvenv.cfg
 

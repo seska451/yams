@@ -14,3 +14,4 @@ Rather than solve every problem, the problems that get solved, should...
 
 # Development process
 
+This projects requires Lua 5.1 and Lua doc and ships with a pre-built version of squish to minify the output.
