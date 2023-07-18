@@ -3,13 +3,10 @@
 !!! info Work in progress
     This is a very new project and so it may not have all the features you are looking for right now.
     If this is the case I can highly recommend having a look at:
-
-> 
-> * [S.S.E - The basic API from Eagle Dynamics](https://wiki.hoggitworld.com/view/Simulator_Scripting_Engine_Documentation#Simulator_Scripting_Engine)
-> * [M.O.O.S.E - An extremely powerful solution](https://flightcontrol-master.github.io/MOOSE_DOCS/)
-> * [Mist](https://wiki.hoggitworld.com/view/Mission_Scripting_Tools_Documentation)
-
-There are other frameworks that exist too, but these are the three most commonly used in 2023 for english speaking users.
+ 
+    > * [S.S.E - The basic API from Eagle Dynamics](https://wiki.hoggitworld.com/view/Simulator_Scripting_Engine_Documentation#Simulator_Scripting_Engine)
+    > * [M.O.O.S.E - An extremely powerful solution](https://flightcontrol-master.github.io/MOOSE_DOCS/)
+    > * [Mist](https://wiki.hoggitworld.com/view/Mission_Scripting_Tools_Documentation)
 
 ## So ...why YAMS?
 
