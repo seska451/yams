@@ -1,8 +1,3 @@
-
---[[ SSE:coalition.service
-
---]]
-
 --[[ message:header
 # Message
 
