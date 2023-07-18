@@ -34,3 +34,7 @@ Rather than solve every problem, the problems that get solved, should...
 * Yield a consistent syntax that allows the editor to fall into the 'pit of success' as much as possible
 
 Further, I want the documentation itself to be easy to generate, clean of ads, searchable, and generally easy to use. This is why I chose mkdocs and
+
+## Alright let's get scripting
+
+:sunglasses: Yeah! Head on over to [Getting Started](/getting-started)
