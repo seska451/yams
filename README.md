@@ -15,7 +15,8 @@ Rather than solve every problem, the problems that get solved, should...
 
 # Handcrafted Documentation
 
-> If you are trying to find the docs - [they are here](https://yams-dcs.rtfd.io) 
+!!! info Where are the docs?
+    If you are trying to find the docs - [they are here](https://seska451.github.io/yams) 
 
 The documentation for this project is extremely important, as such I have made contribution to the documents a simple case of 
 writing the docs inline with the code and running the build scripts. I have taken great care to make this visually clean, easily searchable, and most importantly, easy to contribute to.

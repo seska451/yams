@@ -15,18 +15,19 @@ theme:
     - content.code.copy
   language: en
   palette:
+    # Palette toggle for light mode
     - scheme: default
       toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/weather-sunny
         name: Switch to dark mode
-        primary: teal
-        accent: purple
-    - scheme:
+      accent: purple
+      primary: teal
+    # Palette toggle for dark mode
+    - scheme: slate
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-night
         name: Switch to light mode
-        primary: teal
-        accent: lime
+      accent: teal
 extra:
   social:
     - icon: fontawesome/brands/github-alt
@@ -36,7 +37,7 @@ extra:
     - icon: simple/kofi
       link: https://ko-fi.com/seska
     - icon: fontawesome/solid/rss
-      link: https://seska.io
+      link: https://seska.io w
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
