@@ -50,7 +50,9 @@ The process is simple enough:
 3. Push to your branch
 4. Submit for PR.
 
-The build script script will do just enough to ensure there isn't any large mistakes going on.
+The build script will do just enough to ensure there isn't any large mistakes going on. It will also start the 
+documentation server locally for you to review your changes. If you change and save a markdown file,
+it will hot reload it.
 
 ## DCS World Editing 'Nuances'
 
