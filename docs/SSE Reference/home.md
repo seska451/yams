@@ -1,3 +1,7 @@
+The DCS Simulator Scripting Engine (SSE) is the foundation from which all missions are built. It is useful to learn how this works when implementing your own scripts.
+
+You can use the SSE functionality alongside YAMS to create some awesome gaming experience for other pilots and players of DCS World.
+
 # Classes
 
 | Name                               | Purpose                                                                                       |
