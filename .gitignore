@@ -39,3 +39,10 @@ luac.out
 *.x86_64
 *.hex
 
+Scripts
+Lib
+Include
+dist
+
+pyvenv.cfg
+

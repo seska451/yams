@@ -11,3 +11,6 @@ Rather than solve every problem, the problems that get solved, should...
 1. Be well documented, with clear examples
 2. Have a low barrier to entry to achieve the goal of the feature
 3. Yield a consistent syntax that allows the editor to fall into the 'pit of success' as much as possible
+
+# Development process
+
