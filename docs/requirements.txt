@@ -4,64 +4,64 @@
 #
 #    pip-compile docs/requirements.in
 #
-click>=8.1.3
+click
     # via mkdocs
-ghp-import>=2.1.0
+ghp-import
     # via mkdocs
-griffe>=0.22.0
+griffe
     # via mkdocstrings-python
-importlib-metadata==6.8.0
+importlib-metadata
     # via mkdocs
-jinja2==3.1.2
+jinja2
     # via
     #   mkdocs
     #   mkdocstrings
-markdown==3.3
+markdown
     # via
     #   markdown-include
     #   mkdocs
     #   mkdocs-autorefs
     #   mkdocstrings
     #   pymdown-extensions
-markdown-include==0.8.1
+markdown-include
     # via -r docs/requirements.in
-markupsafe==2.1.3
+markupsafe
     # via
     #   jinja2
     #   mkdocstrings
-mergedeep==1.3.4
+mergedeep
     # via mkdocs
-mkdocs==1.4.3
+mkdocs
     # via
     #   -r docs/requirements.in
     #   mkdocs-autorefs
     #   mkdocstrings
-mkdocs-autorefs>=0.4.1
+mkdocs-autorefs
     # via mkdocstrings
-mkdocstrings[python]==0.22.0
+mkdocstrings[python]
     # via
     #   -r docs/requirements.in
     #   mkdocstrings-python
-mkdocstrings-python==1.2.0
+mkdocstrings-python
     # via mkdocstrings
-packaging==23.1
+packaging
     # via mkdocs
-pymdown-extensions==10.1
+pymdown-extensions
     # via mkdocstrings
-pyparsing==3.1.0
+pyparsing
     # via packaging
-python-dateutil==2.8.2
+python-dateutil
     # via ghp-import
-pyyaml==6.0.1
+pyyaml
     # via
     #   mkdocs
     #   pyyaml-env-tag
-pyyaml-env-tag==0.1
+pyyaml-env-tag
     # via mkdocs
-six==1.16.0
+six
     # via python-dateutil
-watchdog==3.0.0
+watchdog
     # via mkdocs
-zipp==3.16.2
+zipp
     # via importlib-metadata
-mkdocs-material==9.1.18
+mkdocs-material
