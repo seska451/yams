@@ -44,7 +44,22 @@ If you want to include yams in your next mission, its as simple as:
 3. Open your mission editor and either create a new mission or create a new one
 4. In the mission editor, click the triggers manager
 5. Create a new `trigger`, giving it a `condition` to wait for 1 second. Set the `action` to `DO SCRIPT FILE` and select the `yams-dcs.lua` file from your filesystem
-6. Start your mission. You'll see that YAMS outputs a message ot the screen for you to indicate that it is working.
+6. Start your mission. Yams is now loaded but how can you tell? We will need to write our first in game script for that.
+
+### Adding your first script
+
+Now that yams is available for your use, your code can use the library in subsequent scripts.
+
+Create a new trigger and use a `FLAG ON condition` checking for flag 31337, and use the `DO SCRIPT` action this time.
+
+In that `DO SCRIPT` block, paste in the following code:
+
+```lua
+yams.message
+   :with_text("YAMS v0.1 loaded.")
+   :for_seconds(15)
+   :clear_previous_messages()
+```
 
 ###### _The DCS Mission editor, highlighting the trigger button_
 ![The DCS Mission editor, highlighting the trigger button](/assets/open-triggers.png)
