@@ -26,14 +26,15 @@ Now that yams is available for your use, your code can use the library in subseq
 
 Create a new trigger and use a `FLAG ON condition` checking for flag `31337`, and use the `DO SCRIPT` action this time.
 
-In that `DO SCRIPT` block, paste in the following code:
+!!! example
+    In that `DO SCRIPT` block, paste in the following code:
 
-```lua
-yams.message
-   :with_text("YAMS v0.1 loaded.")
-   :for_seconds(15)
-   :clear_previous_messages()
-```
+    ```lua
+    yams.message
+       :with_text("YAMS v0.1 loaded.")
+       :for_seconds(15)
+       :clear_previous_messages()
+    ```
 
 When you start the mission now, you should see the following message in the upper RHS of screen.
 

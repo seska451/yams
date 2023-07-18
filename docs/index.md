@@ -1,8 +1,9 @@
 # Yet Another Mission Script
 
-> [!INFO] Work in progress
-> This is a very new project and so it may not have all the features you are looking for right now.
-> If this is the case I can highly recommend having a look at:
+!!! info Work in progress
+    This is a very new project and so it may not have all the features you are looking for right now.
+    If this is the case I can highly recommend having a look at:
+
 > 
 > * [S.S.E - The basic API from Eagle Dynamics](https://wiki.hoggitworld.com/view/Simulator_Scripting_Engine_Documentation#Simulator_Scripting_Engine)
 > * [M.O.O.S.E - An extremely powerful solution](https://flightcontrol-master.github.io/MOOSE_DOCS/)
@@ -19,9 +20,8 @@ The SSE docs are scant, the Mist docs are ridden with Ads, and the MOOSE docs, w
 
 In addition, I was not a fan of the structure and function of these APIs. Rather than try and turn one around, I felt that starting again was simpler for me. Hence the name - Yet Another Mission Script.
 
-> [!WARNING] This is my rifle. 
-> There are many others like it, but this one is mine.
->
+!!! warning This is my rifle. 
+    There are many others like it, but this one is mine.
 
 ## Project Goals
 

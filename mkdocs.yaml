@@ -3,11 +3,54 @@ docs_dir: docs
 theme:
   name: material
   highlightjs: true
-plugins:
-  - callouts
-  - search
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+        primary: teal
+        accent: purple
+    - scheme:
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+        primary: teal
+        accent: lime
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/seska451/yams
+    - icon: fontawesome/brands/mastodon
+      link: https://infosec.exchange/@jiim
+    - icon: simple/kofi
+      link: https://ko-fi.com/seska
+    - icon: fontawesome/solid/rss
+      link: https://seska.io
 markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
   - admonition
-  - nl2br
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.inlinehilite
+  - pymdownx.mark
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+copyright: |
+  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
