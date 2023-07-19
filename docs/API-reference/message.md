@@ -91,7 +91,7 @@ Returns self
 
 ***
 
-### message:clear_previous_messages
+### message:send
 
 
 Display this message, to all players, in all coalitions. Messages appear in the upper RHS of the screen.
@@ -100,9 +100,9 @@ Returns self
 
 !!! example
     ```lua
-    yams.message
-        :with_text("Hello, YAMS!")
-        :send()
+    local msg = yams.message:with_text("Bingo fuel"):to_coalition(coalition.side.RED)
+    -- later
+    msg:send()
     ```
 
 ***

@@ -24,19 +24,19 @@ Data structure for flag management.
 
 ### flag:set_value
 
-
+Sets the value of a given flag referred to by index.
 
 
 ***
 
 ### flag:set
 
-
+Sets a flag to ON.
 
 
 ***
 
 ### flag:unset
 
-
+Sets a flag to OFF
 

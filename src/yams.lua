@@ -1,3 +1,86 @@
+--[[ yams:header
+
+The `yams` object is the entry point into the YAMS API. See [Getting Started]('../../getting-started') to learn how to load YAMS into your mission.
+
+There are several modules and methods you can use from yams.
+
+## Modules
+
+### message
+The [message](/API-reference/message/) module is the entry point in to anything to do with sending information to players in the game.info
+
+### flag
+The [flag](/API-reference/flag/) module assists with setting and reading flag data.
+
+## Methods
+
+### Logging methods
+The main way to print out debugging related information is via DCS.log which you can find in your `$ENV:USERPROFILE\Saved Games\DCS.openbeta\Logs\dcs.log`
+
+So if your username is `sandra` and your profile is on the C:\ drive you can find your log file at `C:\Users\sandra\Saved Games\DCS.openbeta\Logs\dcs.log`
+
+The following log functions are supported:
+
+- info
+- warn
+- error
+
+!!! example
+    ```lua
+    yams.flag:set(1337) -- sets the 1337 flag ON
+    ```
+--]]
+local yams = {}
+
+
+--[[ yams:info
+Writes an info level message to the DCS Log.
+
+| param | type | summary |
+|---|---|---|
+|message|string|The message you want to print into the log file.|
+
+!!! example
+    ```lua
+    yams:info("Splash One Lizard")
+    ```
+--]]
+function yams:info(message)
+    env.info("[YAMS]" .. message, false)
+end
+
+--[[ yams:warn
+Writes a warning level message to the DCS Log.
+
+| param | type | summary |
+|---|---|---|
+|message|string|The message you want to print into the log file.|
+
+!!! example
+    ```lua
+    yams:warn("Bogey on your six")
+    ```
+--]]
+function yams:warn(message)
+    env.warning("[YAMS]" .. message, false)
+end
+
+--[[ yams:error
+Writes an error level message to the DCS Log.
+
+| param | type | summary |
+|---|---|---|
+|message|string|The message you want to print into the log file.|
+
+!!! example
+    ```lua
+    yams:error("Joker Fuel.")
+    ```
+--]]
+function yams:error(message)
+    env.error("[YAMS]" .. message, false)
+end
+
 --[[ message:header
 # Message
 
@@ -34,7 +117,7 @@ local message = {
     text = nil,
     time = 10,
     should_clear = false,
-    coalition = coalition.side.NEUTRAL
+    coalition = nil
 }
 
 --[[ message:with_text
@@ -101,7 +184,7 @@ function message:clear_previous_messages()
     return self
 end
 
---[[ message:clear_previous_messages
+--[[ message:send
 
 Display this message, to all players, in all coalitions. Messages appear in the upper RHS of the screen.
 
@@ -109,9 +192,9 @@ Returns self
 
 !!! example
     ```lua
-    yams.message
-        :with_text("Hello, YAMS!")
-        :send()
+    local msg = yams.message:with_text("Bingo fuel"):to_coalition(coalition.side.RED)
+    -- later
+    msg:send()
     ```
 --]]
 function message:send()
@@ -181,12 +264,8 @@ local flag = {
     value = 0
 }
 
---- Sets the value of a flag for a given index.
---- @param ndx The flags index number.
---- @param value The value to set the flag. 0 means off, or false. 1 or higher means on, or true.
----
 --[[ flag:set_value
-
+Sets the value of a given flag referred to by index.
 
 --]]
 function flag:set_value(ndx, value)
@@ -196,10 +275,9 @@ function flag:set_value(ndx, value)
     return self
 end
 
---- Sets a flag for a given index, to ON.
---- @param ndx The flags index number.
---[[ flag:set
 
+--[[ flag:set
+Sets a flag to ON.
 
 --]]
 function flag:set(ndx)
@@ -209,10 +287,9 @@ function flag:set(ndx)
     return self
 end
 
---- Sets a flag for a given index, to OFF.
---- @param ndx The flags index number.
---[[ flag:unset
 
+--[[ flag:unset
+Sets a flag to OFF
 
 --]]
 function flag:unset(ndx)
@@ -223,19 +300,48 @@ function flag:unset(ndx)
 end
 -- end Flags
 
---[[ yams:header
+--[[ group:header
 
-The `yams` object is the entry point into the YAMS API. See [Getting Started]('../../getting-started') to learn how to load YAMS into your mission.
+All helper functions to do with group management
+
+--]]
+local group = {}
+
+--[[ group:find
+Find a group by its name.
 
 !!! example
     ```lua
-    yams.flag:set(1337) -- sets the 1337 flag ON
+    local group = yams.group:find("RAAF-FA18C")
     ```
 --]]
-yams = {
-    message = message,
-    flag = flag
-}
+function group:find(group_name)
+    -- look in BLUE
+    local g = coalition.getGroups(group_name, coalition.side.BLUE)
+
+    -- look in RED
+    if g == nil then
+        g = coalition.getGroups(group_name, coalition.side.RED)
+    end
+    -- look in NEUTRAL
+    if g == nil then
+        g = coalition.getGroups(group_name, coalition.side.NEUTRAL)
+    end
+    if g == nil then
+        yams:warn("Could not find group: " .. group_name)
+        return nil
+    end
+    return g
+end
+
+
+
+
+
+yams.message = message
+yams.flag = flag
+yams.group = group
+
 -- let the server know that yams has been loaded via this flag
 flag:set(31337)
 return yams
