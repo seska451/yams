@@ -421,11 +421,11 @@ end
 --[[ generator:get_next_unit_name
 Given a unit name `baseName` as a template, find the next unit name
 --]]
-function generator:get_next_unit_name(baseName, clonedGroupData)
+function generator:get_next_unit_name(baseName, group)
     local count = 1
     local newName = baseName
 
-    while clonedGroupData.units[newName] do
+    while group:getUnits()[newName] do
         count = count + 1
         newName = baseName .. "-" .. count
     end
@@ -445,7 +445,7 @@ end
 function generator:start_in_air(altitude)
     self.start_air = true
     self.start_ground = false
-    self.altitude = altitude
+    self.start_altitude = altitude
     return self
 end
 
@@ -457,42 +457,71 @@ end
 function generator:start_from_ground()
     self.start_air = false
     self.start_ground = true
-    self.altitude = 0
+    self.start_altitude = 0
     return self
 end
 
+function generator:copy_group_data(source_group, position)
+    local group_name = source_group:getName()
+    local pos_str = "x: " .. position.x .. ", y: " .. position.y .. ", z: " .. position.z
+    log:info("copying " .. group_name .. " to position " .. pos_str)
+    local data = {
+        name = generator:get_next_group_name(source_group:getName()),
+        visible = source_group.visible,
+        taskSelected = source_group.taskSelected,
+        route = source_group.route,
+        tasks = source_group.tasks,
+        hidden = source_group.hidden,
+        units = source_group.units,
+        x = source_group.x,
+        y = source_group.y,
+        alt = source_group.alt,
+        alt_type = source_group.alt_type,
+        speed = source_group.speed,
+        payload = source_group.payload,
+        start_time = source_group.start_time,
+        task = source_group.task,
+        livery_id = source_group.livery_id,
+        onboard_num = source_group.onboard_num
+    }
+
+    local units = {}
+    -- Check for duplicate unit names within the cloned group
+    for unit_id, unit_data in pairs(source_group:getUnits()) do
+        local unit_data_copy = {}
+        local originalUnitName = unit_data:getName()
+        local newUnitName = generator:get_next_unit_name(originalUnitName, source_group)
+        unit_data_copy.name = newUnitName
+        unit_data_copy.type = unit_data:getTypeName()
+        unit_data_copy.x = position.x
+        unit_data_copy.y = position.y
+        unit_data_copy.alt = position.z
+        table.insert(units, unit_data_copy)
+    end
+    data.units = units
+
+    return data
+end
 --[[ generator:clone_group
 Clones a template group `template_group_name` to a new group name (format: `template_group_name-N`) and new position.
 
 
 --]]
 function generator:clone_group(template_group_name, position)
+    log:set_context("Generator")
+    local retval = nil
     local templateGroup = group:find(template_group_name)
 
     if templateGroup ~= nil then
-        local cloned_group_name = generator:get_next_group_name(template_group_name)
-        local cloned_group_data = generator:deep_clone(templateGroup, nil)
-        cloned_group_data.name = cloned_group_name
-
-        -- Check for duplicate unit names within the cloned group
-        for unit_id, unit_data in pairs(cloned_group_data.units) do
-            local originalUnitName = unit_data.name
-            local newUnitName = generator:get_next_unit_name(originalUnitName, cloned_group_data)
-            unit_data.name = newUnitName
-            unit_data.x = position.x
-            unit_data.y = position.y
-            unit_data.z = position.z
-        end
-
-        local clonedGroup = coalition.addGroup(templateGroup:getCoalition(), templateGroup:getCategory(), cloned_group_data)
-        return clonedGroup
+        log:info("Cloning group:" .. template_group_name)
+        local cloned_group_data = generator:copy_group_data(templateGroup, position)
+        retval = coalition.addGroup(templateGroup:getCoalition(), templateGroup:getCategory(), cloned_group_data)
+        log:info("Created group:" .. retval.name)
     else
-      -- Handle the case when the template group doesn't exist
-        log:set_context("Generator")
         log:error("Template group not found:" .. template_group_name)
-        log:clear_context()
-        return nil
     end
+    log:clear_context()
+    return retval
 end
 
 --[[ generator:spawn
@@ -503,7 +532,7 @@ You might use this with the `using_group`, `at_random_locations`, `no_less_than`
     ```lua
     local my_gen = yams.generator
     my_gen
-        :using_group("My late activated group template
+        :using_group("My late activated group template")
         :at_random_locations({ coord1, coord2, coord3 })
         :no_more_than(10)
         :no_less_than(1)
@@ -516,10 +545,10 @@ function generator:spawn()
         local randomIndex = math.random(#self.locations)
         local randomLoc = self.locations[randomIndex]
         if self.start_air == true then
-            randomLoc.z = 4570 --in metres, equiv to 15000ft
+            randomLoc.z = self.start_altitude
         end
         if self.start_ground == true then
-            log:error("This functionality is not yet implemented.")
+            log:error("start_from_ground: This functionality is not yet implemented.")
         end
         local spawnedGroup = generator:clone_group(self.group, randomLoc)
         spawnedGroups[i] = spawnedGroup
@@ -529,10 +558,15 @@ end
 
 --[[ random_air_traffic:header
 Generates random air traffic (RAT) based on a template group. Yams will spawn no more than the desired number of groups.
+It will schedule a check every 60 seconds to ensure there is enough aircraft in the sky.
 
 For best results, set the template group to **late activation** to supress it from being spawned on startup. This saves a bit of CPU processing for you.
 
-!!! example
+!!! info Abstraction ahead
+    This function is a convenience over the generator:spawn function it is basically an opinionated wrapper. If you want more control, check out the `generator` module.
+
+
+!!! example Starting a RAT
     ```lua
     local rat = yams.random_air_traffic
     local positions = {
@@ -620,7 +654,7 @@ function random_air_traffic:init()
                 :no_more_than(self.max_groups)
                 :no_more_than(1)
                 :at_random_locations(coordinates)
-                :start_in_air(self.altitude)
+                :start_in_air(self.start_altitude)
                 :spawn()
 
     else
@@ -682,5 +716,5 @@ yams = {
 
 -- let the server know that yams has been loaded via this flag
 flag:set(31337)
-log:info("-=_ YAMS v0.1 LOADED _=-")
+log:info("Loaded and ready for action.")
 return yams

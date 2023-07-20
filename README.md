@@ -1,3 +1,5 @@
+![YAMS logo](./docs/assets/YAMS.png)
+
 # YAMS - Yet Another Mission Script - DCS World
 
 Mission scripting in DCS beyond anything fairly simple only leaves you with a handful of options these days, and those options dont really open the world of scripting to you. They can be difficult to understand because the documentation is hard to navigate. 

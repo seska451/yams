@@ -1,8 +1,13 @@
 Generates random air traffic (RAT) based on a template group. Yams will spawn no more than the desired number of groups.
+It will schedule a check every 60 seconds to ensure there is enough aircraft in the sky.
 
 For best results, set the template group to **late activation** to supress it from being spawned on startup. This saves a bit of CPU processing for you.
 
-!!! example
+!!! info Abstraction ahead
+    This function is a convenience over the generator:spawn function it is basically an opinionated wrapper. If you want more control, check out the `generator` module.
+
+
+!!! example Starting a RAT
     ```lua
     local rat = yams.random_air_traffic
     local positions = {

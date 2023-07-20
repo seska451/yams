@@ -93,7 +93,7 @@ You might use this with the `using_group`, `at_random_locations`, `no_less_than`
     ```lua
     local my_gen = yams.generator
     my_gen
-        :using_group("My late activated group template
+        :using_group("My late activated group template")
         :at_random_locations({ coord1, coord2, coord3 })
         :no_more_than(10)
         :no_less_than(1)
