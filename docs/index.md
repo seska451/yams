@@ -1,5 +1,5 @@
 # Yet Another Mission Script
-
+![YAMS logo](assets/YAMS.png)
 !!! info Work in progress
     This is a very new project and so it may not have all the features you are looking for right now.
     If this is the case I can highly recommend having a look at:
