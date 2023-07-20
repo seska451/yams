@@ -22,6 +22,12 @@ For best results, set the template group to **late activation** to supress it fr
 
 ***
 
+### random_air_traffic:with_name
+
+Gives this random air traffic a name to identify it by, which is displayed in logs
+
+***
+
 ### random_air_traffic:using_group
 
 Use a `group_name` to find a late activated template group for use in random air traffic generation

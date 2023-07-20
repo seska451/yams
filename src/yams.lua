@@ -305,6 +305,24 @@ function group:find(group_name)
     return Group.getByName(group_name)
 end
 
+--[[ group:get_country
+Gets the country ID for a given group, based on the first unit in the group.
+--]]
+function group:get_country(grp)
+    local c_id
+    for i, data in pairs(grp:getUnits()) do
+        c_id = Unit.getCountry(data)
+        if c_id ~= nil then
+            local name = country.name[c_id]
+            break
+        end
+    end
+    if c_id == nil then
+        log:error("No units in group " ..grp:getName().. " yielded a country ID!")
+    end
+    return c_id
+end
+
 --[[ yams:(enum) starting_positions
 | index | value | summary |
 |---|---|---|
@@ -418,19 +436,23 @@ function generator:get_next_group_name(baseName)
   return newName
 end
 
+local function get_guid()
+    local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+    return string.gsub(template, '[xy]', function (c)
+        local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
+        return string.format('%x', v)
+    end)
+end
+
+local function get_short_guid()
+    return string.upper(string.sub(get_guid(), 1, 6))
+end
+
 --[[ generator:get_next_unit_name
 Given a unit name `baseName` as a template, find the next unit name
 --]]
-function generator:get_next_unit_name(baseName, group)
-    local count = 1
-    local newName = baseName
-
-    while group:getUnits()[newName] do
-        count = count + 1
-        newName = baseName .. "-" .. count
-    end
-
-    return newName
+function generator:get_next_unit_name(baseName)
+    return baseName .. "-" .. get_short_guid()
 end
 
 
@@ -467,11 +489,11 @@ function generator:copy_group_data(source_group, position)
     log:info("copying " .. group_name .. " to position " .. pos_str)
     local data = {
         name = generator:get_next_group_name(source_group:getName()),
-        visible = source_group.visible,
+        visible = true,
         taskSelected = source_group.taskSelected,
         route = source_group.route,
         tasks = source_group.tasks,
-        hidden = source_group.hidden,
+        hidden = false,
         units = source_group.units,
         x = source_group.x,
         y = source_group.y,
@@ -482,7 +504,8 @@ function generator:copy_group_data(source_group, position)
         start_time = source_group.start_time,
         task = source_group.task,
         livery_id = source_group.livery_id,
-        onboard_num = source_group.onboard_num
+        onboard_num = source_group.onboard_num,
+        uncontrolled = false
     }
 
     local units = {}
@@ -490,7 +513,7 @@ function generator:copy_group_data(source_group, position)
     for unit_id, unit_data in pairs(source_group:getUnits()) do
         local unit_data_copy = {}
         local originalUnitName = unit_data:getName()
-        local newUnitName = generator:get_next_unit_name(originalUnitName, source_group)
+        local newUnitName = generator:get_next_unit_name(originalUnitName)
         unit_data_copy.name = newUnitName
         unit_data_copy.type = unit_data:getTypeName()
         unit_data_copy.x = position.x
@@ -509,19 +532,22 @@ Clones a template group `template_group_name` to a new group name (format: `temp
 --]]
 function generator:clone_group(template_group_name, position)
     log:set_context("Generator")
-    local retval = nil
+    local cloned_group
     local templateGroup = group:find(template_group_name)
-
+    local country_id = group:get_country(templateGroup)
     if templateGroup ~= nil then
         log:info("Cloning group:" .. template_group_name)
         local cloned_group_data = generator:copy_group_data(templateGroup, position)
-        retval = coalition.addGroup(templateGroup:getCoalition(), templateGroup:getCategory(), cloned_group_data)
-        log:info("Created group:" .. retval.name)
+        coalition.addGroup(country_id, templateGroup:getCategory(), cloned_group_data)
+        cloned_group = group:find(cloned_group_data.name)
+        if cloned_group == nil then
+            log:error("Added group not found:" .. cloned_group_data.name)
+        end
     else
         log:error("Template group not found:" .. template_group_name)
     end
     log:clear_context()
-    return retval
+    return cloned_group
 end
 
 --[[ generator:spawn
@@ -541,7 +567,9 @@ You might use this with the `using_group`, `at_random_locations`, `no_less_than`
 --]]
 function generator:spawn()
     local spawnedGroups = {}
-    for i = self.min, self.max do
+    log:info("Spawning. min " .. self.min .. " max " .. self.max)
+    for i = 1, self.max do
+        log:info("Spawn #"..i)
         local randomIndex = math.random(#self.locations)
         local randomLoc = self.locations[randomIndex]
         if self.start_air == true then
@@ -583,8 +611,16 @@ local random_air_traffic = {
     template = nil,
     max_groups = 0,
     start_air = true,
-    positions = nil
+    positions = nil,
+    name = ""
 }
+--[[ random_air_traffic:with_name
+Gives this random air traffic a name to identify it by, which is displayed in logs
+--]]
+function random_air_traffic:with_name(name)
+    self.name = name
+    return self
+end
 
 --[[ random_air_traffic:using_group
 Use a `group_name` to find a late activated template group for use in random air traffic generation
@@ -637,9 +673,12 @@ Final call in the random_air_traffic fluent API. Use this to start random air tr
 --]]
 function random_air_traffic:init()
     log:set_context("RAT")
-    log:info("Commencing RAT")
+    if self.name ~= nil then
+        log:info("Creating random air traffic for " .. self.name)
+    else
+        log:info("Creating random air traffic with " .. self.template:getName())
+    end
 
-    log:info("finding " .. self.template)
     g = group:find(self.template)
     if g == nil then
         log:error(self.template .. " group not found.")
@@ -652,7 +691,7 @@ function random_air_traffic:init()
         generator
                 :using_group(self.template)
                 :no_more_than(self.max_groups)
-                :no_more_than(1)
+                :no_less_than(1)
                 :at_random_locations(coordinates)
                 :start_in_air(self.start_altitude)
                 :spawn()
