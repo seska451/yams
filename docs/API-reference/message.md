@@ -1,13 +1,3 @@
-# Message
-
-!!! info message object
-    The `yams.message` object is useful for sending messages to coalitions, groups, and units.
-
-    Messages are the primary way to communicate information to players and can often be seen in both PVE and PVP, solo
-    and multiplayer scenarios
-
-***
-
 ### message:
 
 #### Summary

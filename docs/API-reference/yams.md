@@ -28,3 +28,12 @@ The following log functions are supported:
     ```lua
     yams.flag:set(1337) -- sets the 1337 flag ON
     ```
+
+***
+
+### yams:(enum) starting_positions
+
+| index | value | summary |
+|---|---|---|
+| 0 | FROM_PARKING_HOT | Spawn at an airbase parking bay, ready to taxi to runway |
+| 1 | FROM_AIR | Spawn 15000ft in the air |

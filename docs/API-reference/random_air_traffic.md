@@ -5,9 +5,44 @@ For best results, set the template group to **late activation** to supress it fr
 !!! example
     ```lua
     local rat = yams.random_air_traffic
+    local positions = {
+
+    }
     rat                             -- configure the RAT
         :using_group("RAAF F18C")   -- tell it the name of the group to use for the traffic
         :no_more_than(10)           -- configure the maximum number of groups in the air
-        :start_from_ground()        -- (Optional) tell the RAT to start planes on the ground
+        :start_from_air(4500)        -- (Optional) tell the RAT to start planes at a specific altitude
         :init()
     ```
+
+***
+
+### random_air_traffic:using_group
+
+Use a `group_name` to find a late activated template group for use in random air traffic generation
+
+***
+
+### random_air_traffic:no_more_than
+
+Set the maximum number of aircraft spawned for random air traffic
+
+***
+
+### random_air_traffic:start_in_air
+
+Tells all traffic to be spawned in the air at a given altitude
+
+***
+
+### random_air_traffic:start_from_ground
+
+
+!!! warning not yet implemented
+    Planned feature.
+
+***
+
+### random_air_traffic:init
+
+Final call in the random_air_traffic fluent API. Use this to start random air traffic using the parameters set by previous calls.
