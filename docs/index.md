@@ -34,7 +34,7 @@ Further, I want the documentation itself to be easy to generate, clean of ads, s
 
 ## Alright let's get scripting
 
-:sunglasses: Yeah! Head on over to [Getting Started](/getting-started)
+:sunglasses: Yeah! Head on over to [Getting Started](getting-started)
 
 ## Dependencies
 
