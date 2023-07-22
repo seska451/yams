@@ -22,13 +22,39 @@ For best results, set the template group to **late activation** to supress it fr
 
 ***
 
+### random_air_traffic:with_rules_of_engagement
+
+By default, air traffic will have zero aggression and will land at the first sign of trouble.
+It's primary use case is for modelling civilian air traffic.
+
+This behaviour may be adjusted with this function to observe different `rules_of_engagement` & `reaction_to_threat`.
+This applies to every aircraft. If you wish to use the behaviour set in the aircraft template, use
+`yams.enums.rules_of_engagement.inherit`.
+
+!!! example
+    ```lua
+    local rat = yams.random_air_traffic
+    local weapons_free = yams.enums.rules_of_engagement.WEAPONS_FREE
+    local evade_fire = yams.enums.reaction_to_threat.EVADE_FIRE
+    rat
+        :with_name("Iranian Combat Air Patrol")
+        :using_group("IRANAF-CAP")
+        :no_more_than(5)
+        :start_in_air(4500)
+        :with_rules_of_engagement(weapons_free)
+        :with_reaction_to_threat(evade_fire)
+        :init()
+    ```
+
+***
+
 ### random_air_traffic:with_name
 
 Gives this random air traffic a name to identify it by, which is displayed in logs
 
 ***
 
-### random_air_traffic:using_group
+### random_air_traffic:using_template
 
 Use a `group_name` to find a late activated template group for use in random air traffic generation
 
@@ -46,14 +72,6 @@ Tells all traffic to be spawned in the air at a given altitude
 
 ***
 
-### random_air_traffic:start_from_ground
-
-
-!!! warning not yet implemented
-    Planned feature.
-
-***
-
-### random_air_traffic:init
+### random_air_traffic:start
 
 Final call in the random_air_traffic fluent API. Use this to start random air traffic using the parameters set by previous calls.

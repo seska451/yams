@@ -38,12 +38,6 @@ Limit the generation to have no more than `max` units
 
 ***
 
-### generator:no_less_than
-
-Limit the generation to have no less than `min` units
-
-***
-
 ### generator:exactly
 
 Limit the generation to have exactly `count` units
@@ -62,17 +56,9 @@ Given a unit name `baseName` as a template, find the next unit name
 
 ***
 
-### generator:with_starting_position
+### generator:with_starting_location
 
 Set the starting position of generated spawns. Defaults to in air.
-
-***
-
-### generator:start_from_ground
-
-
-!!! warning not yet implemented
-    Planned feature.
 
 ***
 

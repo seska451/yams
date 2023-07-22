@@ -1,4 +1,4 @@
 Option "minify-level" "full"
 Option "uglify" "true"
-Main "src/yams.lua"
+Main "dist/yams-dcs.lua"
 Output "dist/yams-dcs.min.lua"

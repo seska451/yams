@@ -1,4 +1,0 @@
-#!/usr/bin/env lua
-local units = require("units")
-
-units.test()
