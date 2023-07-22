@@ -5,11 +5,7 @@ The enums table defines the many static values that are used in the mission edit
 - **reaction_to_threat** - dictates how a unit may react to threats
 - **waypoint_type** - dictates how a unit should deal with a waypoint
 --]]
-local enums = {
-    rules_of_engagement = rules_of_engagement,
-    reaction_to_threat = reaction_to_threat,
-    waypoint_type = waypoint_type
-}
+
 
 --[[ enums:waypoint_type
 The choices for each waypoint for how a vehicle will interact with the waypoint.
@@ -64,5 +60,9 @@ local reaction_to_threat = {
         return AI.Option.Air.id.REACTION_ON_THREAT
     end
 }
-
+local enums = {
+    rules_of_engagement = rules_of_engagement,
+    reaction_to_threat = reaction_to_threat,
+    waypoint_type = waypoint_type
+}
 return enums
