@@ -20,9 +20,7 @@ The generator module allows you to dynamically generate units, groups & static o
             :spawn()                               -- kicks it all off
     ```
 --]]
-local generator = {
-    utils = {}
-}
+
 
 --[[ generator:new
 
@@ -31,22 +29,37 @@ Initializes the generator.
 !!! warning
     You need to do this before each call to start in order for this module to work correctly.
 --]]
-function generator:new()
-    self.group = { }
-    self.groups_per_generation = 0
-    self.max = 10
-    self.count = -1
-    self.starting_position = { }
-    self.locations = { }
-    self.roe = enums.rules_of_engagement.WEAPON_HOLD
-    self.rtt = enums.reaction_to_threat.NO_REACTION
-    self.interval = nil
-    self.generation_primitive = "groups"
-    self.pool_size = 0
-    self.spawned_groups = { }
-    return self
+
+local generator = {
+    group = nil,
+    groups_per_generation = 0,
+    max = 0,
+    count = 0,
+    starting_position = { },
+    locations = { },
+    roe = enums.rules_of_engagement.WEAPON_HOLD,
+    rtt = enums.reaction_to_threat.NO_REACTION,
+    interval = nil,
+    generation_primitive = "groups",
+    pool_size = 0,
+    spawned_groups = { },
+}
+generator.__index = generator
+function generator.new()
+    return setmetatable({}, generator)
 end
 
+function generator:validate()
+    if self.group == nil then
+        log:error("group should not be nil")
+        return false
+    end
+    if self.starting_position == nil then
+        log:error("starting_position should not be nil")
+        return false
+    end
+    return true
+end
 --[[ generator:from_pool_of
 !!! example
     ```lua
@@ -173,11 +186,15 @@ function generator:with_reaction_to_threat(rtt)
     return self
 end
 
---[[ generator:using_group
+--[[ generator:using_template
 Set the group name you wish to target for generation.
 --]]
 function generator:using_template(group_name)
-    self.group = group_name
+    if Group.getByName(group_name) == nil then
+        log:error("Non-existent group: " .. group_name)
+    else
+        self.group = group_name
+    end
     return self
 end
 
@@ -262,8 +279,7 @@ end
 
 function generator:copy_group_data(source_group, position)
     local group_name = source_group:getName()
-    local pos_str = "x: " .. position.x .. ", y: " .. position.y .. ", z: " .. position.z
-    log:debug("copying " .. group_name .. " to position " .. pos_str)
+    log:debug("copying " .. group_name .. " to position:\n" .. utils:serialize(position, 2))
     local copied_data = {
         name = generator:get_next_group_name(source_group:getName()),
         visible = true,
@@ -308,6 +324,10 @@ Clones a template group `template_group_name` to a new group name (format: `temp
 --]]
 function generator:clone_group(template_group_name, position)
     local cloned_group
+    if template_group_name == nil then
+        log:error("clone_group called without a template group name!")
+        return
+    end
     local templateGroup = group:find(template_group_name)
     local country_id = group:get_country(templateGroup)
     if templateGroup ~= nil then
@@ -333,23 +353,38 @@ function get_next_random(from_list)
     log:debug("RNGesus rolled a " .. randomIndex .. " on a " .. #from_list .. " sided dice.")
     return from_list[randomIndex]
 end
-
-function send_group_to_refuel_with(tanker_group, grp)
-     local receiver_units = grp:getUnits()
-
-    -- Create the refueling task
-    local task = {
-        id = "Refueling",
-        params = {
-            tanker = tanker_group:getUnit(1):getID(),
-            speed = 400, -- Replace with the desired refueling speed
-        },
-    }
-
-    for _, unit in pairs(receiver_units) do
-        -- Set the refueling task for the receiving group's first unit
-        Unit.getController(unit):setTask(task)
+local group = require('group')
+function send_group_to_refuel_with(tanker_group_name, grp)
+    local receiver_units = grp:getUnits()
+    if tanker_group_name == nil or grp == nil then
+        log:error("Expected a tanker group name and a group to refuel!")
     end
+    local tanker_groups = group:find_starting_with(tanker_group_name)
+    if #tanker_groups < 1 then
+        log:warn("Looks like we could not find a tanker group starting with " .. tanker_group_name)
+    else
+        local tanker_group = tanker_groups[1]
+        local tanker = Group.getUnits(tanker_group)[1]
+        if tanker == nil then
+            log:error("Please make sure the first member of the group is a tanker aircraft")
+            return
+        end
+        local tanker_id = Unit.getID(tanker)
+        -- Create the refueling task
+        local task = {
+            id = "Refueling",
+            params = {
+                tanker = tanker_id,
+                speed = 400, -- Replace with the desired refueling speed
+            },
+        }
+
+        for _, unit in pairs(receiver_units) do
+            -- Set the refueling task for the receiving group's first unit
+            Unit.getController(unit):setTask(task)
+        end
+    end
+
 end
 
 function get_cap_task_for_zone(grp, zone)
@@ -386,11 +421,8 @@ function get_cap_task_for_zone(grp, zone)
             }
 end
 
-function create_new_groups(self)
-
-
-
-    for i = 1, self.max do
+function generator:create_new_groups(count)
+    for i = 1, count + 1 do
         log:debug("Spawn #"..i)
         local location
         if #self.locations > 0 then
@@ -410,7 +442,6 @@ function create_new_groups(self)
             local cap = get_cap_task_for_zone(g, zone)
             g:getController():setTask(cap)
         end
-
         table.insert(self.spawned_groups, g)
     end
 end
@@ -439,8 +470,8 @@ function generator:refuelling_at(tanker_group)
     return self
 end
 
---[[ generator:spawn
-This is the final command of the Fluent generator API. Starts spawning given the parameters set by other functions.position
+--[[ generator:spawn_over_time
+Starts spawning groups over time, given the parameters set by other functions.position
 
 You might use this with the `using_group`, `at_random_locations`, `no_less_than` and `no_more_than` functions.
 !!! example
@@ -451,16 +482,19 @@ You might use this with the `using_group`, `at_random_locations`, `no_less_than`
         :at_random_locations({ coord1, coord2, coord3 })
         :no_more_than(10)
         :no_less_than(1)
-        :spawn()
+        :spawn_over_time()
     ```
 --]]
-function generator:spawn()
+function generator:spawn_over_time()
     log:debug("Initializing spawn with settings:\n" ..utils:serialize(self, 2))
-    create_new_groups(self)
-    if self.groups_per_generation > 0 then
-        timer.scheduleFunction(schedule_spawning, self, timer.getTime() + self.interval)
+    -- todo: do a better job of checking all the preconditions
+    if self.group == nil then
+        log:error("Couldn't find template group - ejecting from spawn operation.")
         return
     end
+    local count = clamp(self.groups_per_generation, 0, self.max)
+    self:create_new_groups(count)
+    timer.scheduleFunction(self.schedule_spawning, self, timer.getTime() + self.interval)
 end
 
 function check_fuel_state(groups, tanker_group)
@@ -469,11 +503,10 @@ function check_fuel_state(groups, tanker_group)
     for _, grp in pairs(groups) do
         if Group.isExist(grp) then
             for _, unit in pairs(Group.getUnits(grp)) do
-               local fuelConsumption = Unit.getFuelConsumption(unit)
-               local fuelCapacity = Unit.getFuelCapacity(unit)
-               local fuelLevel = fuelConsumption / fuelCapacity
+               local fuelLevel = Unit.getFuel(unit)
                if fuelLevel <= low_fuel then
-                    log:debug("Group " .. Group.getName(grp) .. " has a unit with low fuel, sending to the tanker")
+                   local unit_name = Unit.getName(unit)
+                   log:debug("Unit " .. unit_name .. " in " .. Group.getName(grp) .. " has fuel state " .. 0 .. ", re-routing to refuel.")
                    table.insert(groups_to_refuel, grp)
                end
             end
@@ -488,43 +521,72 @@ function check_if_alive(groups)
     local keys_to_remove = {}
     for index, grp in pairs(groups) do
         if Group.isExist(grp) == false then
-            log:debug("Group dead: " .. (grp.name or "[unknown]"))
+            log:debug("Group dead: " .. (Group.getName(grp) or "[unknown]"))
             table.insert(keys_to_remove, index)
+        else
+            -- check if each unit is below 1 health
+            local all_damaged = false
+            for _, unit in pairs(Group.getUnits(grp)) do
+                all_damaged = all_damaged and (Unit.GetLife(unit) < 1)
+            end
+            if all_damaged then
+                table.insert(keys_to_remove, index)
+            end
         end
     end
 
-    for _, key in ipairs(keys_to_remove) do
-        table.remove(groups, key)
+    for _, ndx in ipairs(keys_to_remove) do
+        table.remove(groups, ndx)
     end
 end
 
-function schedule_spawning(cfg, time)
+function generator:schedule_spawning(time)
     log:debug(
         "Spawn time " .. time ..
-        "\n# groups left in pool: " .. cfg.pool_size ..
-        "\n# already spawned: " .. #cfg.spawned_groups ..
-        "\n# active max: " .. cfg.max)
+        "\n# groups left in pool: " .. self.pool_size ..
+        "\n# already spawned: " .. #self.spawned_groups ..
+        "\n# active max: " .. self.max)
 
-    check_if_alive(cfg.spawned_groups)
-    if cfg.tanker_group ~= nil then
-        check_fuel_state(cfg.spawned_groups, cfg.tanker_group)
+    check_if_alive(self.spawned_groups)
+    if self.tanker_group ~= nil then
+        check_fuel_state(self.spawned_groups, self.tanker_group)
     end
 
-    if #cfg.spawned_groups >= cfg.max then
-        log:debug("There are enough units out there right now, I'll come back in " .. cfg.interval .. "seconds to check again.")
-        return time + cfg.interval
+    if #self.spawned_groups >= self.max then
+        log:debug("There are enough units out there right now, I'll come back in " .. self.interval .. "seconds to check again.")
+        return time + self.interval
     end
     local count
-    if cfg.pool_size >= cfg.groups_per_generation then
-        count = cfg.groups_per_generation
+    if self.pool_size >= self.groups_per_generation then
+        count = self.groups_per_generation
     else
-        count = cfg.pool_size
+        count = self.pool_size
     end
 
-    cfg.pool_size = cfg.pool_size - count
-    log:debug("spawning " .. count .. " at a time, leaving" .. cfg.pool_size .. "in the pool")
-    local spawned = create_new_groups(cfg) -- todo: bug here - not setting count????
-    log:debug("Now there are the following spawned groups for this generation: " .. utils:serialize(cfg.spawned_groups, 2))
-    return time + cfg.interval
+    self.pool_size = self.pool_size - count
+    local count = clamp(self.groups_per_generation, 0, self.max)
+    log:debug("spawning " .. count .. " at a time, leaving" .. self.pool_size .. "in the pool")
+    self:create_new_groups(count)
+    log:debug("Now there are the following spawned groups for this generation: " .. utils:serialize(self.spawned_groups, 2))
+    return time + self.interval
 end
+
+function clamp(value, min, max)
+    return math.max(min, math.min(value, max))
+end
+
+--[[ generator:spawn_once
+--]]
+function generator:spawn_once()
+    log:debug("Initializing spawn with settings:\n" ..utils:serialize(self, 2))
+    -- todo: do a better job of checking all the preconditions
+    if self.group == nil then
+        log:error("Couldn't find template group - ejecting from spawn operation.")
+        return
+    end
+    local count = clamp(self.groups_per_generation, 0, self.max)
+    self:create_new_groups(count)
+    return self.spawned_groups[1]
+end
+
 return generator

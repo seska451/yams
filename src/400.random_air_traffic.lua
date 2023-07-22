@@ -21,18 +21,29 @@ For best results, set the template group to **late activation** to supress it fr
         :init()
     ```
 --]]
-
-local random_air_traffic = {}
-
-function random_air_traffic:new()
-    self.template = nil
-    self.max_groups = 0
-    self.start_air = true
-    self.positions = nil
-    self.name = ""
-    self.roe = enums.rules_of_engagement.WEAPON_HOLD
-    self.rtt = enums.reaction_to_threat.BYPASS_AND_ESCAPE
-    return self
+local random_air_traffic = {
+    template = nil,
+    max_groups = 0,
+    start_air = true,
+    positions = nil,
+    name = "",
+    roe = enums.rules_of_engagement.WEAPON_HOLD,
+    rtt = enums.reaction_to_threat.BYPASS_AND_ESCAPE
+}
+random_air_traffic.__index = random_air_traffic
+function random_air_traffic.new()
+    return setmetatable({}, random_air_traffic)
+end
+function random_air_traffic:validate()
+    if self.template == nil then
+        log:error("template should not be nil")
+        return false
+    end
+    if self.positions == nil then
+        log:error("positions should not be nil")
+        return false
+    end
+    return true
 end
 --[[ random_air_traffic:with_rules_of_engagement
 By default, air traffic will have zero aggression and will land at the first sign of trouble.
@@ -155,19 +166,17 @@ function random_air_traffic:start()
     local coalition = Group.getCoalition(g)
     coordinates = get_airbase_positions_for(coalition)
     local pool_size = 1000
-    generator
-            :new()
-            :using_template(self.template)              -- sets the template
-            :from_pool_of(pool_size):groups()                  -- sets the original count of groups available
-            :generate(self.max_groups):groups()                       -- sets how many groups to spawn at once
-            :every(20):seconds()                        -- sets the generation interval
-            :until_there_are(self.max_groups):groups()  -- sets the maximum number of active groups
-            :at_random_locations(coordinates)           -- sets the locations in which these groups could appear
-            :at_altitude(self.start_altitude)           -- sets the altitude at which these groups appear
-            :with_rules_of_engagement(self.roe)         -- sets the ROE for the groups
-            :with_reaction_to_threat(self.rtt)          -- sets the RTT for the groups
-            :spawn()                                    -- kicks it all off
-
+    generator.new()
+    :using_template(self.template)              -- sets the template
+    :from_pool_of(pool_size):groups()                  -- sets the original count of groups available
+    :generate(self.max_groups):groups()                       -- sets how many groups to spawn at once
+    :every(20):seconds()                        -- sets the generation interval
+    :until_there_are(self.max_groups):groups()  -- sets the maximum number of active groups
+    :at_random_locations(coordinates)           -- sets the locations in which these groups could appear
+    :at_altitude(self.start_altitude)           -- sets the altitude at which these groups appear
+    :with_rules_of_engagement(self.roe)         -- sets the ROE for the groups
+    :with_reaction_to_threat(self.rtt)          -- sets the RTT for the groups
+    :spawn_over_time()                                    -- kicks it all off
 
     log:debug("RAT Started")
 end

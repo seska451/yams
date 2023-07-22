@@ -123,7 +123,7 @@ are spawned into the world.
 
 ***
 
-### generator:using_group
+### generator:using_template
 
 Set the group name you wish to target for generation.
 
@@ -201,9 +201,9 @@ Clones a template group `template_group_name` to a new group name (format: `temp
 
 ***
 
-### generator:spawn
+### generator:spawn_over_time
 
-This is the final command of the Fluent generator API. Starts spawning given the parameters set by other functions.position
+Starts spawning groups over time, given the parameters set by other functions.position
 
 You might use this with the `using_group`, `at_random_locations`, `no_less_than` and `no_more_than` functions.
 !!! example
@@ -214,5 +214,10 @@ You might use this with the `using_group`, `at_random_locations`, `no_less_than`
         :at_random_locations({ coord1, coord2, coord3 })
         :no_more_than(10)
         :no_less_than(1)
-        :spawn()
+        :spawn_over_time()
     ```
+
+***
+
+### generator:spawn_once
+

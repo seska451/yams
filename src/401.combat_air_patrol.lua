@@ -27,22 +27,36 @@ This module makes plenty of assumptions in order to achieve this ease of use.
         :start()                                    -- Send them on their way.
     ```
 --]]
-local combat_air_patrol = {}
-
-function combat_air_patrol:new()
-    self.template = nil
-    self.max_groups = 0
-    self.start_air = true
-    self.name = ""
-    self.roe = enums.rules_of_engagement.WEAPON_FREE
-    self.rtt = enums.reaction_to_threat.EVADE_FIRE
-    self.start_location = nil
-    self.patrol_area = nil
-    self.tanker_group = nil
-    self.squadron_size = 0
-    return self
+local combat_air_patrol = {
+    template = nil,
+    max_groups = 0,
+    start_air = true,
+    name = "",
+    roe = enums.rules_of_engagement.WEAPON_FREE,
+    rtt = enums.reaction_to_threat.EVADE_FIRE,
+    start_location = nil,
+    patrol_area = nil,
+    tanker_group = nil,
+    squadron_size = 0
+}
+combat_air_patrol.__index = combat_air_patrol
+function combat_air_patrol.new()
+    return setmetatable({}, combat_air_patrol)
 end
-
+function combat_air_patrol:validate()
+    if self.template == nil then
+        log:error("template should not be nil")
+        return false
+    end
+    if self.start_location == nil then
+        log:error("start_location should not be nil")
+        return false
+    end
+    if self.patrol_area == nil then
+        log:error("patrol_area should not be nil")
+    end
+    return true
+end
 --[[ combat_air_patrol:using_template
 !!! example
     ```lua
@@ -169,22 +183,19 @@ function combat_air_patrol:start()
         log:error(self.template .. " group not found.")
         return
     end
-    generator
-            :new()
-            :using_template(self.template)              -- sets the template
-            :from_pool_of(self.squadron_size):groups()                  -- sets the original count of groups available
-            :generate(self.max_groups):groups()                       -- sets how many groups to spawn at once
-            :every(20):seconds()                        -- sets the generation interval
-            :until_there_are(self.max_groups):groups()  -- sets the maximum number of active groups
-            :with_starting_position(self.start_location)   -- sets the location from which these groups must appear
-            :defending_zone(zone:find(self.patrol_area))           -- sets the area to perform CAP operations
-            :refuelling_at(self.tanker_group)           -- tells the group which tanker to go an refuel with
-            :at_altitude(self.start_altitude)           -- sets the altitude at which these groups appear
-            :with_rules_of_engagement(self.roe)         -- sets the ROE for the groups
-            :with_reaction_to_threat(self.rtt)          -- sets the RTT for the groups
-            :spawn()                                    -- kicks it all off
-
-
+    generator.new()
+    :using_template(self.template)              -- sets the template
+    :from_pool_of(self.squadron_size):groups()                  -- sets the original count of groups available
+    :generate(self.max_groups):groups()                       -- sets how many groups to spawn at once
+    :every(20):seconds()                        -- sets the generation interval
+    :until_there_are(self.max_groups):groups()  -- sets the maximum number of active groups
+    :with_starting_position(self.start_location)   -- sets the location from which these groups must appear
+    :defending_zone(zone:find(self.patrol_area))           -- sets the area to perform CAP operations
+    :refuelling_at(self.tanker_group)           -- tells the group which tanker to go an refuel with
+    :at_altitude(self.start_altitude)           -- sets the altitude at which these groups appear
+    :with_rules_of_engagement(self.roe)         -- sets the ROE for the groups
+    :with_reaction_to_threat(self.rtt)          -- sets the RTT for the groups
+    :spawn_over_time()                                    -- kicks it all off
     log:debug("CAP Started")
 end
 return combat_air_patrol

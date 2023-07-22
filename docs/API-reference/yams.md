@@ -1,5 +1,5 @@
 
-The `yams` object is the entry point into the YAMS API. See [Getting Started]('../../getting-started') to learn how to load YAMS into your mission.
+The `yams` singleton is the entry point into the YAMS API. See [Getting Started]('../../getting-started') to learn how to load YAMS into your mission.
 
 There are several modules and methods you can use from yams.
 

@@ -36,7 +36,7 @@ function utils:serialize(tbl, indent)
     local indent = indent or 0
     if type(tbl) ~= "table" then
         log:error("Serialize expected a table, but got something else. Bailing out.")
-        result = tbl.tostring()
+        result = tostring(tbl)
     else
         for key, value in pairs(tbl) do
             if type(value) ~= "function" then
