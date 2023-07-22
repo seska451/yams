@@ -265,6 +265,18 @@ function generator:with_starting_position(pos)
     return self
 end
 
+--[[ generator:with_home_base
+# generator:with_home_base
+--]]
+function generator:with_home_base(airbase_name)
+    local ab = Airbase.getByName(airbase_name)
+    self.start_location = Airbase.getPosition(ab)
+
+    -- todo: this fails because ab is nil.
+    log:debug("home base at:" .. utils.serialize(self.start_location, 2))
+    return self
+end
+
 --[[ generator:at_altitude
 !!! example
     ```lua
@@ -578,8 +590,10 @@ end
 --[[ generator:spawn_once
 --]]
 function generator:spawn_once()
-    log:debug("Initializing spawn with settings:\n" ..utils:serialize(self, 2))
-    -- todo: do a better job of checking all the preconditions
+    if self:validate() == false then
+        log:warn("Generator failed validation: " .. utils:serialize(self, 2))
+        return
+    end
     if self.group == nil then
         log:error("Couldn't find template group - ejecting from spawn operation.")
         return

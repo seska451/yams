@@ -37,3 +37,19 @@ The choices for each waypoint for how a vehicle will interact with the waypoint.
 | 2 | EVADE_FIRE | When fired upon, attempt to evade incoming missiles or bullets |
 | 3 | BYPASS_AND_ESCAPE | Avoid confrontation by evading fire, while re-routing to complete mission objectives. |
 | 4 | ALLOW_ABORT_MISSION | Avoid confrontation by evading fire and return to base (RTB). |
+
+***
+
+### enums:airbases
+
+The following airbases are available to use in yams
+!!! example
+    ```lua
+    local home_plate = yams.airbases.persian_gulf.ras_al_khaimah_intl
+    ```
+# Maps
+## Persian Gulf
+| property | value |
+| --- | --- |
+| ras_al_khaimah_intl | Ras Al Khaimah Intl |
+

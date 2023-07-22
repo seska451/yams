@@ -165,6 +165,12 @@ Set the starting position of generated spawns. Defaults to in air.
 
 ***
 
+### generator:with_home_base
+
+# generator:with_home_base
+
+***
+
 ### generator:at_altitude
 
 !!! example

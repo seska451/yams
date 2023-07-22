@@ -60,9 +60,29 @@ local reaction_to_threat = {
         return AI.Option.Air.id.REACTION_ON_THREAT
     end
 }
+--[[ enums:airbases
+The following airbases are available to use in yams
+!!! example
+    ```lua
+    local home_plate = yams.airbases.persian_gulf.ras_al_khaimah_intl
+    ```
+# Maps
+## Persian Gulf
+| property | value |
+| --- | --- |
+| ras_al_khaimah_intl | Ras Al Khaimah Intl |
+
+--]]
+local airbases = {
+   persian_gulf = {
+       ras_al_khaimah_intl = "Ras Al Khaimah Intl"
+   }
+}
+
 local enums = {
     rules_of_engagement = rules_of_engagement,
     reaction_to_threat = reaction_to_threat,
-    waypoint_type = waypoint_type
+    waypoint_type = waypoint_type,
+    airbases = airbases
 }
 return enums
