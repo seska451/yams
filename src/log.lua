@@ -13,7 +13,7 @@ local log = {
     context = "[YAMS]"
 }
 
---[[ log:info
+--[[ logger:info
 Writes an info level message to the DCS Log.
 
 | param | type | summary |
@@ -30,7 +30,7 @@ function log:info(message)
     env.info(log.context .. " " .. message, false)
 end
 
---[[ log:warn
+--[[ logger:warn
 Writes a warning level message to the DCS Log.
 
 | param | type | summary |
@@ -47,7 +47,7 @@ function log:warn(message)
     env.warning(log.context .. " " .. message, false)
 end
 
---[[ log:error
+--[[ logger:error
 Writes an error level message to the DCS Log.
 
 | param | type | summary |
@@ -64,8 +64,9 @@ function log:error(message)
     env.error(log.context .. " " .. message, false)
 end
 
+--[[ logger:set_context
 
-
+--]]
 function log:set_context(context)
     if context == nil then
         self.context = "[YAMS]"
@@ -75,10 +76,16 @@ function log:set_context(context)
     end
 end
 
+--[[ logger:clear_context
+
+--]]
 function log:clear_context()
     self.context = "[YAMS]"
 end
 
+--[[ logger:debug
+
+--]]
 function log:debug(message)
     if config:get_debug() == true then
         log:set_context("YAMS - DEBUG")
@@ -86,3 +93,5 @@ function log:debug(message)
         log:clear_context()
     end
 end
+
+return log

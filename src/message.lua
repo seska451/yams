@@ -1,3 +1,4 @@
+--[[ message:header
 # Message
 
 !!! info message object
@@ -24,11 +25,16 @@
         :clear_previous_messages()  --    clearing the previous messages
         :send()                     --    send to all players
     ```
+--]]
 
-***
+local message = {
+    text = nil,
+    time = 10,
+    should_clear = false,
+    coalition = nil
+}
 
-### message:with_text
-
+--[[ message:with_text
 
 Adds text to an ephemeral message shown to the user on the upper RHS of the screen.
 
@@ -44,11 +50,13 @@ Returns self
         :with_text("Hello, YAMS!")
         :send() -- sends to all players in all coalitions
     ```
+--]]
+function message:with_text(txt)
+    self.text = txt
+    return self
+end
 
-***
-
-### message:for_seconds
-
+--[[ message:for_seconds
 
 Sets the message duration
 
@@ -65,11 +73,13 @@ Returns self
         :for_seconds(5)
         :send() -- sends to all players in all coalitions
     ```
+--]]
+function message:for_seconds(seconds)
+    self.time = seconds
+    return self
+end
 
-***
-
-### message:clear_previous_messages
-
+--[[ message:clear_previous_messages
 
 Upon displaying this message, remove all other messages
 
@@ -82,11 +92,13 @@ Returns self
         :clear_previous_messages()
         :send() -- sends to all players in all coalitions
     ```
+--]]
+function message:clear_previous_messages()
+    self.should_clear = true
+    return self
+end
 
-***
-
-### message:send
-
+--[[ message:send
 
 Display this message, to all players, in all coalitions. Messages appear in the upper RHS of the screen.
 
@@ -98,3 +110,36 @@ Returns self
     -- later
     msg:send()
     ```
+--]]
+function message:send()
+    if self.coalition ~= nil then
+        trigger.action.outTextForCoalition(self.coalition, self.text, self.time, self.should_clear )
+    else
+        trigger.action.outText(self.text, self.time, self.should_clear)
+    end
+
+    return self
+end
+
+--[[ message:to_coalition
+
+Only send this message to the given coalition.
+
+| param | type |
+| --- | --- |
+| coalition | SSE.coalition.side [Enumeration]|
+
+!!! example
+    ```lua
+    yams.message
+        :with_text("Hello, YAMS!")
+        :to_coalition(coalition.side.BLUE)
+        :send()
+    ```
+]]
+function message:to_coalition(coalition)
+    self.coalition = coalition
+    return self
+end
+
+return message

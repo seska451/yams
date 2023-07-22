@@ -48,6 +48,16 @@ This applies to every aircraft. If you wish to use the behaviour set in the airc
 
 ***
 
+### random_air_traffic:with_reaction_to_threat
+
+!!! example
+    ```lua
+    yams.random_air_traffic:with_reaction_to_threat(rtt)
+
+    ```
+
+***
+
 ### random_air_traffic:with_name
 
 Gives this random air traffic a name to identify it by, which is displayed in logs
@@ -66,9 +76,29 @@ Set the maximum number of aircraft spawned for random air traffic
 
 ***
 
+### random_air_traffic:from_pool_of
+
+!!! example
+    ```lua
+    yams.random_air_traffic:from_pool_of(count)
+
+    ```
+
+***
+
 ### random_air_traffic:start_in_air
 
 Tells all traffic to be spawned in the air at a given altitude
+
+***
+
+### random_air_traffic:get_airbase_positions_for
+
+!!! example
+    ```lua
+    yams.random_air_traffic:get_airbase_positions_for(coalition)
+
+    ```
 
 ***
 

@@ -1,3 +1,4 @@
+--[[ flag:header
 # Flag
 Use the `flag` module to manage user flags in the game.
 
@@ -23,21 +24,42 @@ Use the `flag` module to manage user flags in the game.
     The `yams.flag` object is useful for storing binary state as flags. DCS uses flags to communicate across triggers and steps.
     For example, a trigger may use a condition that checks is a flag is set or not, before executing its action.
 
+--]]
+local flag = {
+    flag_index = 0,
+    value = 0
+}
 
-***
-
-### flag:set_value
-
+--[[ flag:set_value
 Sets the value of a given flag referred to by index.
+--]]
+function flag:set_value(ndx, value)
+    self.flag_index = ndx
+    self.value = value
+    trigger.action.setUserFlag(self.flag_index, self.value)
+    return self
+end
 
-***
 
-### flag:set
-
+--[[ flag:set
 Sets a flag to ON.
+--]]
+function flag:set(ndx)
+    self.flag_index = ndx
+    self.value = true
+    self:set_value(self.flag_index, self.value)
+    return self
+end
 
-***
 
-### flag:unset
-
+--[[ flag:unset
 Sets a flag to OFF
+--]]
+function flag:unset(ndx)
+    self.flag_index = ndx
+    self.value = false
+    self:set_value(self.flag_index, self.value)
+    return self
+end
+
+return flag

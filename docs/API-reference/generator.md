@@ -1,4 +1,42 @@
+# Generator
 The generator module allows you to dynamically generate units, groups & static objects on the fly.
+
+!!! example
+    The following example is lifted directly from the random_air_traffic module, because it uses `generator` under the hood.
+    ```lua
+    generator
+            :new()
+            :using_template(template)              -- sets the template
+            :from_pool_of(pool_size):groups()      -- sets the original count of groups available
+            :generate(max_groups):groups()         -- sets how many groups to spawn at once
+            :every(20):seconds()                   -- sets the generation interval
+            :until_there_are(max_groups):groups()  -- sets the maximum number of active groups
+            :at_random_locations(coordinates)      -- sets the locations in which these groups could appear
+            :at_altitude(start_altitude)           -- sets the altitude at which these groups appear
+            :with_rules_of_engagement(roe)         -- sets the ROE for the groups
+            :with_reaction_to_threat(rtt)          -- sets the RTT for the groups
+            :spawn()                               -- kicks it all off
+    ```
+
+***
+
+### generator:new
+
+
+Initializes the generator.
+
+!!! warning
+    You need to do this before each call to start in order for this module to work correctly.
+
+***
+
+### generator:from_pool_of
+
+!!! example
+    ```lua
+    yams.generator:from_pool_of(count)
+
+    ```
 
 ***
 
@@ -16,6 +54,71 @@ Useful for spawning units and groups based on templates. Typically used by other
     ```lua
     local group = group:find("My group")
     local clone = generator:deep_clone(group, nil)
+    ```
+
+***
+
+### generator:groups
+
+!!! example
+    ```lua
+    yams.generator:groups()
+    ```
+
+***
+
+### generator:generate
+
+Generate `count` groups everytime `interval` elapses.
+
+***
+
+### generator:every
+
+Set the generation interval. When this elapses a series of checks are performed. If they pass, another generation of groups
+are spawned into the world.
+!!! example
+    ```lua
+    yams.generator:every(interval_in_seconds)
+    ```
+
+***
+
+### generator:minutes
+
+!!! example
+    ```lua
+    yams.generator:minutes()
+    ```
+
+***
+
+### generator:seconds
+
+!!! example
+    ```lua
+    yams.generator:seconds()
+
+    ```
+
+***
+
+### generator:with_rules_of_engagement
+
+!!! example
+    ```lua
+    yams.generator:with_rules_of_engagement(roe)
+
+    ```
+
+***
+
+### generator:with_reaction_to_threat
+
+!!! example
+    ```lua
+    yams.generator:with_reaction_to_threat(rtt)
+
     ```
 
 ***
@@ -62,11 +165,39 @@ Set the starting position of generated spawns. Defaults to in air.
 
 ***
 
+### generator:at_altitude
+
+!!! example
+    ```lua
+    yams.generator:at_altitude(altitude)
+
+    ```
+
+***
+
 ### generator:clone_group
 
 Clones a template group `template_group_name` to a new group name (format: `template_group_name-N`) and new position.
 
+***
 
+### generator:defending_zone
+
+!!! example
+    ```lua
+    yams.generator:defending_zone(zone)
+
+    ```
+
+***
+
+### generator:refuelling_at
+
+!!! example
+    ```lua
+    yams.generator:refuelling_at(tanker_group)
+
+    ```
 
 ***
 

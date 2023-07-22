@@ -6,6 +6,16 @@ The enums table defines the many static values that are used in the mission edit
 
 ***
 
+### enums:waypoint_type
+
+The choices for each waypoint for how a vehicle will interact with the waypoint.
+!!! example
+    ```lua
+    local wp_type = yams.enums.waypoint_type.TAKEOFF
+    ```
+
+***
+
 ### enums:rules_of_engagement
 
 | index | value | summary |
