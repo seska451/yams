@@ -1,4 +1,4 @@
-
+local log = require('log')
 --[[ group:header
 
 All helper functions to do with group management
