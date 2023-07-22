@@ -25,15 +25,11 @@ function utils:serialize(tbl, indent)
     return result
 end
 
---[[ log:info
-Writes an info level message to the DCS Log.
+--[[ message:header
+# Message
 
-| param | type | summary |
-|---|---|---|
-|message|string|The message you want to print into the log file.|
+!!! info message object
+    The `yams.message` object is useful for sending messages to coalitions, groups, and units.
 
-!!! example
-    ```lua
-    local log = yams.logger
-    log:info("Splash One Lizard")
-    ```
+    Messages are the primary way to communicate information to players and can often be seen in both PVE and PVP, solo
+    and multiplayer scenarios

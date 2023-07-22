@@ -1,19 +1,7 @@
-require = function(script_name)
-    env:info('script requested: ' .. script_name)
-    if _G[script_name] then
-        env:info('We found a variable that looks like the script you are after: ' .. utils:serialize(_G[script_name]))
-        return _G[script_name]
-    else
-        env:error('We have no idea where to find: ' .. script_name)
-    end
-end
 config = {
     debug = false
 }
-
--- let's test this out
-local test = require('test')
-test:hello_world()
+local log = require('log') -- this should not be here after processing
 
 function config:set_debug(val)
     env.info("[DEBUG] setting debug to " .. tostring(val))
@@ -25,9 +13,7 @@ function config:get_debug()
     return self.debug
 end
 
-local log = {
-    context = "[YAMS]"
-}
+
 
 local waypoint_type = {
     TAKEOFF = AI.Task.WaypointType.TAKEOFF,
@@ -122,79 +108,6 @@ function utils:serialize(tbl, indent)
     return result
 end
 
---[[ log:info
-Writes an info level message to the DCS Log.
-
-| param | type | summary |
-|---|---|---|
-|message|string|The message you want to print into the log file.|
-
-!!! example
-    ```lua
-    local log = yams.logger
-    log:info("Splash One Lizard")
-    ```
---]]
-function log:info(message)
-    env.info(log.context .. " " .. message, false)
-end
-
---[[ log:warn
-Writes a warning level message to the DCS Log.
-
-| param | type | summary |
-|---|---|---|
-|message|string|The message you want to print into the log file.|
-
-!!! example
-    ```lua
-    local log = yams.logger
-    log:warn("Bogey on your six")
-    ```
---]]
-function log:warn(message)
-    env.warning(log.context .. " " .. message, false)
-end
-
---[[ log:error
-Writes an error level message to the DCS Log.
-
-| param | type | summary |
-|---|---|---|
-|message|string|The message you want to print into the log file.|
-
-!!! example
-    ```lua
-    local log = yams.logger
-    log:error("Joker Fuel.")
-    ```
-]]
-function log:error(message)
-    env.error(log.context .. " " .. message, false)
-end
-
-
-
-function log:set_context(context)
-    if context == nil then
-        self.context = "[YAMS]"
-    else
-        context = "[" .. context .."]"
-        self.context = context
-    end
-end
-
-function log:clear_context()
-    self.context = "[YAMS]"
-end
-
-function log:debug(message)
-    if config:get_debug() == true then
-        log:set_context("YAMS - DEBUG")
-        log:info(message)
-        log:clear_context()
-    end
-end
 --[[ message:header
 # Message
 
@@ -1179,7 +1092,6 @@ yams = {
     config = config,
     zone = zone
 }
-
 
 -- let the server know that yams has been loaded via this flag
 flag:set(31337)

@@ -73,7 +73,6 @@ local function get_file_header()
         header = header .. 'env.info(\"❤ \t\t\tFrom Seska With Love\t\t\t\t\t❤\")\n'
         header = header .. 'env.info(\"❤ commit: '..hash..'\t❤\")\n'
     end
-    print(header)
     return header
 end
 
@@ -88,19 +87,29 @@ local function build_single_yams_file_from(yam_files)
     print("Building yams into a single file")
     local script = ""
     for _, file in ipairs(yam_files) do
+        -- remove any 'require' statements
         local file_content = read_file_as_string(file)
-        if file_content then
-            -- Remove the last line if it starts with "return"
-            local lastLine = file_content:match("[^\r\n]+$")
-            if lastLine and lastLine:match("^%s*return") then
-                file_content = file_content:sub(1, -1 * #lastLine - 1)
+        local stripped_content = ""
+        local last_line = ""
+
+        for line in file_content:gmatch("[^\r\n]+") do
+            if not line:match("= require%(") then
+                stripped_content = stripped_content .. line .. "\n"
             end
-            script = script .. "\n-- **** START:" .. get_filename_from_path(file) .. " **** ---"
-            script = script .. "\n" .. file_content
-            script = script .. "\n-- **** END:" .. get_filename_from_path(file) .. " **** ---"
+            last_line = line
         end
+        -- Check if the last line matches the pattern "return something" and is empty
+        local _, match_end = last_line:find("^%s*return%s+.+")
+        if match_end then
+            print('here')
+            -- Remove the last line from the stripped_content
+            stripped_content = stripped_content:gsub("\n[^\n]*(\n?)$", "%1")
+        end
+        script = script .. "\n-- **** START:" .. get_filename_from_path(file) .. " **** ---"
+        script = script .. "\n" .. stripped_content
+        script = script .. "\n-- **** END:" .. get_filename_from_path(file) .. " **** ---"
     end
-    return script
+    return script .. "\nreturn yams"
 end
 
 local function minify_yams()
