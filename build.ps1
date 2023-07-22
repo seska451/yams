@@ -1,12 +1,4 @@
-$dist = ".\dist"
-$dest = $ENV:USERPROFILE + "\Saved Games\DCS.openbeta\Missions\"
-
-& 'C:\Program Files (x86)\Lua\5.1\lua.exe' .\builder.lua
-
-
-# copy to the users mission directory for use with the game
-
-cp .\dist\yams-dcs.* $dest
+& 'C:\Program Files (x86)\Lua\5.1\lua.exe' .\build.lua
 
 # build docs
 pushd src

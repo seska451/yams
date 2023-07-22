@@ -1,4 +1,3 @@
-env:info('DCS is running. Overriding the require function, since DCS has disabled it anyway')
 require = function(script_name)
     env:info('script requested: ' .. script_name)
     if _G[script_name] then
@@ -8,19 +7,10 @@ require = function(script_name)
         env:error('We have no idea where to find: ' .. script_name)
     end
 end
-config = {}
-function house_keeping()
-    -- announce ourselves
-    env.info("-=_ YAMS v0.1 LOADING _=-")
-    -- check the script run seed, useful for replaying some random behaviour later
-    local seed = math.random(1, 100)
-    env.info("-=_ TODAY'S SCRIPT BROUGHT TO YOU BY THE NUMBER " .. seed .. " _=-")
-    -- initialize configuration settings
-    config = {
-        debug = false
-    }
-end
-house_keeping()
+config = {
+    debug = false
+}
+
 -- let's test this out
 local test = require('test')
 test:hello_world()

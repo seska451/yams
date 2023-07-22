@@ -66,10 +66,21 @@ local function get_file_header()
     local hash = get_git_commit_hash()
     local header = ""
     if hash then
-        header = header .. "--=_ YAMS version " .. version .. "- git commit hash: " .. hash .. " _=--\n"
+        header = header .. "--=_ ❤ \t\t\t\tYAMS v" .. version .. "\t\t\t\t\t❤ _=--\n"
+        header = header .. "--=_ ❤ \t\t\tFrom Seska With Love\t\t\t❤ _=--\n"
+        header = header .. "--=_ ❤ " .. hash .. "\t❤ _=--\n"
+        header = header .. 'env.info(\"❤ \t\t\t\tYAMS v'..version..' LOADED\t\t\t\t\t❤\")\n'
+        header = header .. 'env.info(\"❤ \t\t\tFrom Seska With Love\t\t\t\t\t❤\")\n'
+        header = header .. 'env.info(\"❤ commit: '..hash..'\t❤\")\n'
     end
     print(header)
     return header
+end
+
+local function get_minified_header()
+    local version = read_file_as_string('current_version.txt')
+    local hash = get_git_commit_hash()
+    return "--[[ YAMS v" ..version.. " commit: " ..hash.. "]]"
 end
 
 
@@ -95,6 +106,8 @@ end
 local function minify_yams()
     print("Minifying and Uglifying yams")
     dofile('squish.lua')
+    print('renaming uglified file to yams-dcs.ugly.lua')
+    os.rename('./dist/yams-dcs.min.lua.uglified', './dist/yams-dcs.ugly.lua')
 end
 
 local function copy_file(source_path, dest_path)
@@ -132,12 +145,41 @@ local function copy_yams_to_dev_environment()
         end
     end
 end
---asdasd
+
+local function prepend_header(filePath, header)
+    local file = io.open(filePath, "r")
+    if not file then
+        print("Error: File not found.")
+        return
+    end
+
+    -- Read the existing content of the file
+    local existingContent = file:read("*all")
+    file:close()
+
+    -- Combine the content to prepend with the existing content
+    local updatedContent = header .. existingContent
+
+    -- Open the file for writing (overwrites its previous content)
+    file = io.open(filePath, "w")
+    if not file then
+        print("Error: Failed to write to file.")
+        return
+    end
+
+    -- Write the updated content to the file
+    file:write(updatedContent)
+    file:close()
+end
+-- begin build script
 print('Building yams-dcs.lua')
 local yam_files = find_all_lua_files_recursively_in('./src')
 local script = build_single_yams_file_from(yam_files)
 local file_header = get_file_header()
-
+script = file_header .. script
 write_to('./dist/yams-dcs.lua', script)
 minify_yams()
+header = get_minified_header()
+prepend_header('./dist/yams-dcs.min.lua', header)
+prepend_header('./dist/yams-dcs.ugly.lua', header)
 copy_yams_to_dev_environment()
